@@ -31,6 +31,7 @@ def getImage():
 def downloadImage(imgURL):
     savePath = "/app/images/input/" + str(random.randint(1,10000)) + ".jpg"
     urllib.request.urlretrieve(imgURL, savePath)
+    time.sleep(2)
     return savePath
 
 
@@ -49,9 +50,8 @@ def styleImage(imgPath, stylePath):
 def genDescription(data):
     return data['style'] + " applied to a photo by " + data['credit'] + '.\nOriginal photo: ' + data['creditLink']
 
-
 def tweetArt(imgPath, post):
-    time.sleep(1)
+    time.sleep(3)
     api.update_with_media(
         str(imgPath),
         status=post
@@ -66,9 +66,7 @@ def genNewPost():
     image['style'] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
 
     styledImgPath = styleImage(imgPath, artStylePath)
-
     description = genDescription(image)
-    print(description)
 
     tweetArt(styledImgPath, description)
 
