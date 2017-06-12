@@ -1,24 +1,13 @@
-"""
-import credentials and tweepy client
-def sendTweet
-def downloadImage
-def styleImage
-def deleteImg
-def getArtStyle
-def main
-"""
-import tweepy
-import json
-import glob
-import random
+import json, os, glob, random, time
 from unsplash_python.unsplash import Unsplash
-
+import tweepy
 import urllib.request
 
 credentials = json.loads(open('credentials.json').read())
 auth = tweepy.OAuthHandler(credentials['consumerKey'], credentials['consumerSecret'])
 auth.set_access_token(credentials['accessToken'], credentials['accessSecret'])
 api = tweepy.API(auth)
+cwd = str(os.getcwd())
 
 def getImageURL():
 
@@ -32,13 +21,13 @@ def getImageURL():
         featured=True
     )[0]
 
-    return img['urls']['full'] + '.jpg'
+    return img['urls']['regular'] + '.jpg'
 
 
 def downloadImage(imgURL):
-    imgPath = "images/unsplashPhoto" + str(random.randint(1,1000)) + ".jpg"
-    urllib.request.urlretrieve(imgURL,imgPath)
-    return imgPath
+    savePath = "images/input/" + str(random.randint(1,10000)) + ".jpg"
+    urllib.request.urlretrieve(imgURL,savePath)
+    return savePath
 
 
 def getArtStyle():
@@ -46,20 +35,39 @@ def getArtStyle():
 
     return random.choice(availableStyles)
 
+def styleImage(imgPath, stylePath):
+
+    script = str("python evaluate.py --checkpoint " + stylePath + " --in-path " + "images/input/" + " --out-path " + "images/output/" + " --allow-different-dimensions")
+    os.system(script)
 
 
+    return imgPath.replace("input","output")
 
-def tweetArt():
-    api.update_with_media()
+def tweetArt(imgPath):
+    api.update_with_media(str(imgPath))
+    print("tweet sent")
 
+
+def postNewArt():
+    image = getImageURL()
+    imgPath = downloadImage(image)
+    artStylePath = getArtStyle()
+
+    styledImgPath = styleImage(imgPath,artStylePath)
+
+    tweetArt(imgPath)
 
 
 def main():
-    image = getImageURL()
-    imgPath = downloadImage(image)
 
-    artStylePath = getArtStyle()
+    sleepTime = 60 * 60 *  6 # 6 hours
 
+    sleepTime = 20 # five seconds
+
+
+    while True:
+        postNewArt()
+        time.sleep(sleepTime)
 
 
 main()
