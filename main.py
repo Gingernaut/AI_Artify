@@ -29,7 +29,7 @@ def getImage():
 
 
 def downloadImage(imgURL):
-    savePath = "images/input/" + str(random.randint(1,10000)) + ".jpg"
+    savePath = "/app/images/input/" + str(random.randint(1,10000)) + ".jpg"
     urllib.request.urlretrieve(imgURL, savePath)
     return savePath
 
@@ -40,14 +40,14 @@ def getArtStyle():
 
 
 def styleImage(imgPath, stylePath):
-    script = str("python evaluate.py --checkpoint " + stylePath + " --in-path " + "images/input/" + " --out-path " + "images/output/" + " --allow-different-dimensions")
+    script = str("python evaluate.py --checkpoint " + stylePath + " --in-path " + "/app/images/input/" + " --out-path " + "/app/images/output/" + " --allow-different-dimensions")
     os.system(script)
 
     return imgPath.replace("input","output")
 
 
 def genDescription(data):
-    return data['style'] + " applied to a photograph by " + data['credit'] + '.\nOriginal photo: ' + data['creditLink']
+    return data['style'] + " applied to a photo by " + data['credit'] + '.\nOriginal photo: ' + data['creditLink']
 
 
 def tweetArt(imgPath, post):
