@@ -7,7 +7,6 @@ credentials = json.loads(open('credentials.json').read())
 auth = tweepy.OAuthHandler(credentials['consumerKey'], credentials['consumerSecret'])
 auth.set_access_token(credentials['accessToken'], credentials['accessSecret'])
 api = tweepy.API(auth)
-cwd = str(os.getcwd())
 
 def getImage():
     unsplash = Unsplash({
@@ -39,6 +38,7 @@ def getArtStyle():
     availableStyles = glob.glob("ckpt_files/*")
     return random.choice(availableStyles)
 
+
 def styleImage(imgPath, stylePath):
     script = str("python evaluate.py --checkpoint " + stylePath + " --in-path " + "images/input/" + " --out-path " + "images/output/" + " --allow-different-dimensions")
     os.system(script)
@@ -47,8 +47,8 @@ def styleImage(imgPath, stylePath):
 
 
 def genDescription(data):
-
     return data['style'] + " applied to a photograph by " + data['credit'] + '.\nOriginal photo: ' + data['creditLink']
+
 
 def tweetArt(imgPath, post):
     time.sleep(1)
@@ -57,7 +57,7 @@ def tweetArt(imgPath, post):
         status=post
     )
 
- 
+
 def genNewPost():
     image = getImage()
     imgPath = downloadImage(image['url'])
@@ -77,11 +77,7 @@ def genNewPost():
 
 
 def main():
-
     sleepTime = 60 * 60 *  6 # 6 hours
-
-    sleepTime = 10 # five seconds
-
 
     while True:
         try:
@@ -90,6 +86,5 @@ def main():
             print("Error: " + str(e))
 
         time.sleep(sleepTime)
-
 
 main()
