@@ -44,6 +44,7 @@ def styleImage(imgPath, stylePath):
     return imgPath.replace("input","output")
 
 def tweetArt(imgPath):
+    time.sleep(1)
     api.update_with_media(str(imgPath))
     print("tweet sent")
 
@@ -55,7 +56,10 @@ def postNewArt():
 
     styledImgPath = styleImage(imgPath,artStylePath)
 
-    tweetArt(imgPath)
+    tweetArt(styledImgPath)
+
+    os.remove(imgPath)
+    os.remove(styledImgPath)
 
 
 def main():
@@ -66,10 +70,12 @@ def main():
 
 
     while True:
-        postNewArt()
+        try:
+            postNewArt()
+        except:
+            print("error generating new post")
+
         time.sleep(sleepTime)
 
 
 main()
-
-# python evaluate.py --checkpoint ckpt_files/" + fields['arttype'] +".ckpt --in-path uploads/ --out-path outputs/")
