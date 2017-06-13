@@ -16,7 +16,7 @@ def getImage():
     })
 
     img = unsplash.photos().get_random_photo(
-        featured=True
+         query=randQuery()
     )[0]
 
     imgData = {
@@ -34,6 +34,8 @@ def downloadImage(imgURL):
     time.sleep(2)
     return savePath
 
+def randQuery():
+    return random.choice(['nature','mountain','forest','waterfall','sunset','jungle','desert','field'])
 
 def getArtStyle():
     availableStyles = glob.glob("ckpt_files/*")
@@ -48,7 +50,7 @@ def styleImage(imgPath, stylePath):
 
 
 def genDescription(data):
-    return data['style'] + " applied to a photo by " + data['credit'] + '.\nOriginal photo: ' + data['creditLink']
+    return data['style'] + " applied to a photo by " + data['credit'] + '.\nOriginal: ' + data['creditLink']
 
 def tweetArt(imgPath, post):
     time.sleep(3)
@@ -69,13 +71,12 @@ def genNewPost():
     description = genDescription(image)
 
     tweetArt(styledImgPath, description)
-
     os.remove(imgPath)
     os.remove(styledImgPath)
 
 
 def main():
-    sleepTime = 60 * 60 *  6 # 6 hours
+    sleepTime = 60 * 60 *  4
 
     while True:
         try:
