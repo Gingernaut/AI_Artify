@@ -82,8 +82,10 @@ def main():
         try:
             genNewPost()
         except Exception as e:
-            print("Error: " + str(e))
+            api.send_direct_message(credentials['my_twitter'], text='New post failed: ' + str(e))
 
         time.sleep(sleepTime)
 
-main()
+if __name__ == "__main__":
+    main()
+
