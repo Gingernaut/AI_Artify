@@ -4,8 +4,8 @@
 
 ## Examples
 
-![alt text](images/examples/scream.png "Scream")
-[Original](https://unsplash.com/photos/XeCvtUX-AE0)
+![alt text](images/examples/Lion.png "Great Wave")
+[Original](https://unsplash.com/photos/uh5AfvDwwdM)
 ![alt text](images/examples/city.png "City")
 [Original](https://unsplash.com/photos/-icmOdYWXuQ)
 ![alt text](images/examples/udnie_flower.png "Udnie")
