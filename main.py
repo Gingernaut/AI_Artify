@@ -3,16 +3,16 @@ from unsplash_python.unsplash import Unsplash
 import tweepy
 import urllib.request
 
-credentials = json.loads(open('credentials.json').read())
-auth = tweepy.OAuthHandler(credentials['consumerKey'], credentials['consumerSecret'])
-auth.set_access_token(credentials['accessToken'], credentials['accessSecret'])
+credentials = json.loads(open("credentials.json").read())
+auth = tweepy.OAuthHandler(credentials["consumerKey"], credentials["consumerSecret"])
+auth.set_access_token(credentials["accessToken"], credentials["accessSecret"])
 api = tweepy.API(auth)
 
 def getImage():
     unsplash = Unsplash({
-        'application_id': credentials['unsplashID'],
-        'secret': credentials['unsplashSecret'],
-        'callback_url': credentials['callbackURL']
+        "application_id": credentials["unsplashID"],
+        "secret": credentials["unsplashSecret"],
+        "callback_url": credentials["callbackURL"]
     })
 
     img = unsplash.photos().get_random_photo(
@@ -20,9 +20,9 @@ def getImage():
     )[0]
 
     imgData = {
-        'url': img['urls']['regular'] + '.jpg',
-        'credit': img['user']['name'] or img['user']['username'],
-        'creditLink': (img['links']['self'] or img['user']['portfolio_url'] or img['user']['links']['portfolio']).replace("api.","")
+        "url": img["urls"]["regular"] + ".jpg",
+        "credit": img["user"]["name"] or img["user"]["username"],
+        "creditLink": (img["links"]["self"] or img["user"]["portfolio_url"] or img["user"]["links"]["portfolio"]).replace("api.","")
     }
 
     return imgData
@@ -35,7 +35,7 @@ def downloadImage(imgURL):
     return savePath
 
 def randQuery():
-    return random.choice(['nature','mountain','forest','waterfall','sunset','jungle','desert','field'])
+    return random.choice(["nature","mountain","forest","waterfall","sunset","jungle","desert","field"])
 
 def getArtStyle():
     availableStyles = glob.glob("ckpt_files/*")
@@ -50,7 +50,7 @@ def styleImage(imgPath, stylePath):
 
 
 def genDescription(data):
-    return data['style'] + " applied to a photo by " + data['credit'] + '.\nOriginal: ' + data['creditLink']
+    return data["style"] + " applied to a photo by " + data["credit"] + ".\nOriginal: " + data["creditLink"]
 
 def tweetArt(imgPath, post):
     time.sleep(3)
@@ -62,10 +62,10 @@ def tweetArt(imgPath, post):
 
 def genNewPost():
     image = getImage()
-    imgPath = downloadImage(image['url'])
+    imgPath = downloadImage(image["url"])
     artStylePath = getArtStyle()
 
-    image['style'] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
+    image["style"] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
 
     styledImgPath = styleImage(imgPath, artStylePath)
     description = genDescription(image)
@@ -82,7 +82,7 @@ def main():
         try:
             genNewPost()
         except Exception as e:
-            api.send_direct_message(credentials['my_twitter'], text='New post failed: ' + str(e))
+            api.send_direct_message(credentials["myTwitter"], text="New post failed: " + str(e))
 
         time.sleep(sleepTime)
 
