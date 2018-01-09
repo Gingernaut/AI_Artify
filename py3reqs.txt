@@ -1,3 +1,2 @@
 tweepy==3.5.0
-python-unsplash==1.0.0a2
 

@@ -1,6 +1,4 @@
-import json, os, glob, random, time
-from unsplash.api import Api
-from unsplash.auth import Auth
+import json, os, glob, random, time, requests
 import tweepy
 import urllib.request
 
@@ -9,26 +7,23 @@ TwitterAuth = tweepy.OAuthHandler(credentials["consumerKey"], credentials["consu
 TwitterAuth.set_access_token(credentials["accessToken"], credentials["accessSecret"])
 TwitterApi = tweepy.API(TwitterAuth)
 
-
-client_id = credentials["unsplashID"]
-client_secret = credentials["unsplashSecret"]
-redirect_uri = credentials["callbackURL"]
-
-UnsplashAuth = Auth(client_id, client_secret, redirect_uri)
-UnsplashApi = Api(UnsplashAuth)
-
 def getImage():
+    random_url = "https://api.unsplash.com/photos/random?featured=true"
 
-    image = UnsplashApi.photo.random(featured=True)
-    
-    # imgData = {
-    #     "url": img["urls"]["regular"] + ".jpg",
-    #     "credit": img["user"]["name"] or img["user"]["username"],
-    #     "creditLink": (img["links"]["self"] or img["user"]["portfolio_url"] or img["user"]["links"]["portfolio"]).replace("api.","")
-    # }
+    headers = {'Authorization': 'Client-ID ' + credentials["unsplashID"]}
+    img = requests.get(random_url, headers=headers).json()
 
-    return image
+    creditName = img["user"]["name"] or img["user"]["username"]
+    if img["user"].get("twitter_username", None):
+        creditName = "@" + img["user"]["twitter_username"]
 
+    imgData = {
+        "url": img["urls"]["regular"] + ".jpg",
+        "credit": creditName,
+        "creditLink": img["links"]["self"].replace("api.", "")
+    }
+
+    return imgData
 
 def downloadImage(imgURL):
     savePath = "/app/images/input/" + str(random.randint(1,1000)) + ".jpg"
@@ -53,35 +48,32 @@ def tweetArt(imgPath, post):
     time.sleep(3)
     TwitterApi.update_with_media(
         str(imgPath),
-        status=post
-    )
+        status=post)
 
 def genNewPost():
     image = getImage()
-    print(image)
 
-    # imgPath = downloadImage(image["url"])
-    # artStylePath = getArtStyle()
+    imgPath = downloadImage(image["url"])
+    artStylePath = getArtStyle()
 
-    # image["style"] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
+    image["style"] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
 
-    # styledImgPath = styleImage(imgPath, artStylePath)
-    # description = genDescription(image)
+    styledImgPath = styleImage(imgPath, artStylePath)
+    description = genDescription(image)
 
-    # tweetArt(styledImgPath, description)
-    # os.remove(imgPath)
-    # os.remove(styledImgPath)
+    tweetArt(styledImgPath, description)
+    os.remove(imgPath)
+    os.remove(styledImgPath)
 
 
 def main():
-    #sleepTime = 60 * 60 *  4
-    sleepTime = 3
+    sleepTime = 60 * 60 *  4
     while True:
         try:
             genNewPost()
         except Exception as e:
             TwitterApi.send_direct_message(credentials["myTwitter"], text="New post failed: " + str(e))
-
+            print(e)
         time.sleep(sleepTime)
 
 if __name__ == "__main__":
