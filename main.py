@@ -1,46 +1,44 @@
 import json, os, glob, random, time
-from unsplash_python.unsplash import Unsplash
+from unsplash.api import Api
+from unsplash.auth import Auth
 import tweepy
 import urllib.request
 
 credentials = json.loads(open("credentials.json").read())
-auth = tweepy.OAuthHandler(credentials["consumerKey"], credentials["consumerSecret"])
-auth.set_access_token(credentials["accessToken"], credentials["accessSecret"])
-api = tweepy.API(auth)
+TwitterAuth = tweepy.OAuthHandler(credentials["consumerKey"], credentials["consumerSecret"])
+TwitterAuth.set_access_token(credentials["accessToken"], credentials["accessSecret"])
+TwitterApi = tweepy.API(TwitterAuth)
+
+
+client_id = credentials["unsplashID"]
+client_secret = credentials["unsplashSecret"]
+redirect_uri = credentials["callbackURL"]
+
+UnsplashAuth = Auth(client_id, client_secret, redirect_uri)
+UnsplashApi = Api(UnsplashAuth)
 
 def getImage():
-    unsplash = Unsplash({
-        "application_id": credentials["unsplashID"],
-        "secret": credentials["unsplashSecret"],
-        "callback_url": credentials["callbackURL"]
-    })
 
-    img = unsplash.photos().get_random_photo(
-         query=randQuery()
-    )[0]
+    image = UnsplashApi.photo.random(featured=True)
+    
+    # imgData = {
+    #     "url": img["urls"]["regular"] + ".jpg",
+    #     "credit": img["user"]["name"] or img["user"]["username"],
+    #     "creditLink": (img["links"]["self"] or img["user"]["portfolio_url"] or img["user"]["links"]["portfolio"]).replace("api.","")
+    # }
 
-    imgData = {
-        "url": img["urls"]["regular"] + ".jpg",
-        "credit": img["user"]["name"] or img["user"]["username"],
-        "creditLink": (img["links"]["self"] or img["user"]["portfolio_url"] or img["user"]["links"]["portfolio"]).replace("api.","")
-    }
-
-    return imgData
+    return image
 
 
 def downloadImage(imgURL):
-    savePath = "/app/images/input/" + str(random.randint(1,10000)) + ".jpg"
+    savePath = "/app/images/input/" + str(random.randint(1,1000)) + ".jpg"
     urllib.request.urlretrieve(imgURL, savePath)
     time.sleep(2)
     return savePath
 
-def randQuery():
-    return random.choice(["nature","mountain","forest","waterfall","sunset","jungle","desert","field"])
-
 def getArtStyle():
     availableStyles = glob.glob("ckpt_files/*")
     return random.choice(availableStyles)
-
 
 def styleImage(imgPath, stylePath):
     script = str("python evaluate.py --checkpoint " + stylePath + " --in-path " + "/app/images/input/" + " --out-path " + "/app/images/output/" + " --allow-different-dimensions")
@@ -48,41 +46,41 @@ def styleImage(imgPath, stylePath):
 
     return imgPath.replace("input","output")
 
-
 def genDescription(data):
     return data["style"] + " applied to a photo by " + data["credit"] + ".\nOriginal: " + data["creditLink"]
 
 def tweetArt(imgPath, post):
     time.sleep(3)
-    api.update_with_media(
+    TwitterApi.update_with_media(
         str(imgPath),
         status=post
     )
 
-
 def genNewPost():
     image = getImage()
-    imgPath = downloadImage(image["url"])
-    artStylePath = getArtStyle()
+    print(image)
 
-    image["style"] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
+    # imgPath = downloadImage(image["url"])
+    # artStylePath = getArtStyle()
 
-    styledImgPath = styleImage(imgPath, artStylePath)
-    description = genDescription(image)
+    # image["style"] = "'" + artStylePath.split("/")[-1].replace(".ckpt","").replace("_"," ").title() + "' art style"
 
-    tweetArt(styledImgPath, description)
-    os.remove(imgPath)
-    os.remove(styledImgPath)
+    # styledImgPath = styleImage(imgPath, artStylePath)
+    # description = genDescription(image)
+
+    # tweetArt(styledImgPath, description)
+    # os.remove(imgPath)
+    # os.remove(styledImgPath)
 
 
 def main():
-    sleepTime = 60 * 60 *  6
-
+    #sleepTime = 60 * 60 *  4
+    sleepTime = 3
     while True:
         try:
             genNewPost()
         except Exception as e:
-            api.send_direct_message(credentials["myTwitter"], text="New post failed: " + str(e))
+            TwitterApi.send_direct_message(credentials["myTwitter"], text="New post failed: " + str(e))
 
         time.sleep(sleepTime)
 
