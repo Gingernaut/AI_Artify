@@ -16,8 +16,8 @@ def getImage():
     creditName = img['user'].get('name','username')
     if img['user'].get('twitter_username', None):
         creditName = '@' + img['user']['twitter_username']
-
     imgData = {
+
         'url': img['urls']['regular'] + '.jpg',
         'credit': creditName,
         'creditLink': img['links']['self'].replace('api.', '')
@@ -26,30 +26,40 @@ def getImage():
     return imgData
 
 def downloadImage(imgURL):
-    savePath = '/app/images/input/' + str(random.randint(1,1000)) + '.jpg'
-    urllib.request.urlretrieve(imgURL, savePath)
-    time.sleep(2)
-    return savePath
+    try:
+        savePath = '/app/images/input/' + str(random.randint(1,1000)) + '.jpg'
+        urllib.request.urlretrieve(imgURL, savePath)
+        time.sleep(5)
+        return savePath
+    except Exception as e:
+        TwitterApi.send_direct_message(credentials['myTwitter'], text='download image failed: ' + str(e))
+
 
 def getArtStyle():
     availableStyles = glob.glob('ckpt_files/*')
     return random.choice(availableStyles)
 
 def styleImage(imgPath, stylePath):
-    script = str('python evaluate.py --checkpoint ' + stylePath + ' --in-path ' + '/app/images/input/' + ' --out-path ' + '/app/images/output/' + ' --allow-different-dimensions')
-    os.system(script)
+    try:
+        script = str('python evaluate.py --checkpoint ' + stylePath + ' --in-path ' + '/app/images/input/' + ' --out-path ' + '/app/images/output/' + ' --allow-different-dimensions')
+        os.system(script)
+        return imgPath.replace('input','output')
 
-    return imgPath.replace('input','output')
+    except Exception as e:
+        TwitterApi.send_direct_message(credentials['myTwitter'], text='styling image failed: ' + str(e))
 
 def genDescription(data):
     return '{} applied to a photo by {}. \nOriginal: {}'.format(data['style'], data['credit'], data['creditLink'])
 
 def tweetArt(imgPath, post):
-    time.sleep(3)
-    TwitterApi.update_with_media(
-        str(imgPath),
-        status=post
-    )
+    try:
+        time.sleep(3)
+        TwitterApi.update_with_media(
+            str(imgPath),
+            status=post
+        )
+    except Exception as e:
+        TwitterApi.send_direct_message(credentials['myTwitter'], text='Tweeting image failed: ' + str(e))
 
 def genNewPost():
     image = getImage()
