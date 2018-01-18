@@ -83,7 +83,7 @@ def genNewPost():
 
 
 def main():
-    sleepTime = 60 * 60 *  4
+    sleepTime = 60 * 60 * 4
     while True:
         try:
             genNewPost()
