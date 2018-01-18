@@ -7,8 +7,11 @@ TwitterAuth = tweepy.OAuthHandler(credentials['consumerKey'], credentials['consu
 TwitterAuth.set_access_token(credentials['accessToken'], credentials['accessSecret'])
 TwitterApi = tweepy.API(TwitterAuth)
 
+def getQueryTerm():
+    return "&query=" + random.choice(['mountains', 'nature', 'forest', 'jungle', 'beach', 'autumn', 'winter', 'summer', 'spring', 'waterfall', 'rain'])
+
 def getImage():
-    random_url = 'https://api.unsplash.com/photos/random?featured=true'
+    random_url = 'https://api.unsplash.com/photos/random?featured=true' + getQueryTerm()
 
     headers = {'Authorization': 'Client-ID ' + credentials['unsplashID']}
     img = requests.get(random_url, headers=headers).json()
