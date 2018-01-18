@@ -87,10 +87,11 @@ def main():
     while True:
         try:
             genNewPost()
+            time.sleep(sleepTime)
         except Exception as e:
             TwitterApi.send_direct_message(credentials['myTwitter'], text='New post failed: ' + str(e))
+            time.sleep(5)
             print(e)
-        time.sleep(sleepTime)
 
 if __name__ == '__main__':
     main()
