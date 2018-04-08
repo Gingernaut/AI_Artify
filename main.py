@@ -65,6 +65,16 @@ def tweetArt(imgPath, post):
     except Exception as e:
         TwitterApi.send_direct_message(credentials['myTwitter'], text='Tweeting image failed: ' + str(e))
 
+
+def removeImages():
+    outputs = glob.glob('/app/images/output/*')
+    for f in outputs:
+        os.remove(f)
+
+    inputs = glob.glob('/app/images/input/*')
+    for f in inputs:
+        os.remove(f)
+
 def genNewPost():
     image = getImage()
 
@@ -78,9 +88,7 @@ def genNewPost():
     description = genDescription(image)
 
     tweetArt(styledImgPath, description)
-    os.remove(imgPath)
-    os.remove(styledImgPath)
-
+    removeImages()
 
 def main():
     sleepTime = 60 * 60 * 4
@@ -92,6 +100,8 @@ def main():
             TwitterApi.send_direct_message(credentials['myTwitter'], text='New post failed: ' + str(e))
             time.sleep(5)
             print(e)
+
+    TwitterApi.send_direct_message(credentials['myTwitter'], text='AI_Artify is shutting down')
 
 if __name__ == '__main__':
     main()
