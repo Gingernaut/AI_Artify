@@ -16,8 +16,8 @@ def getImage():
     headers = {'Authorization': 'Client-ID ' + credentials['unsplashID']}
     img = requests.get(random_url, headers=headers).json()
 
-    creditName = img['user'].get('name', img['user'].get('username', None))
-    if img['user'].get('twitter_username', None):
+    creditName = img['user'].get('name', img['user'].get('username'))
+    if img['user'].get('twitter_username'):
         creditName = '@' + img['user']['twitter_username']
 
     return {
@@ -50,10 +50,10 @@ def styleImage(imgPath, stylePath):
         TwitterApi.send_direct_message(credentials['myTwitter'], text='styling image failed: ' + str(e))
 
 def genDescription(data):
-    if data.get('credit', None):
-        return '{} applied to a photo by {}. \nOriginal: {}'.format(data['style'], data['credit'], data['creditLink'])
+    if data.get('credit'):
+        return '{} applied to a photo by {}. \nOriginal: {} \n #tensorflow #styletransfer'.format(data['style'], data['credit'], data['creditLink'])
     else:
-        return '{} applied to an @unsplash featured photo. \nOriginal: {}'.format(data['style'], data['creditLink'])
+        return '{} applied to an @unsplash featured photo. \nOriginal: {} \n #tensorflow #styletransfer'.format(data['style'], data['creditLink'])
 
 def tweetArt(imgPath, post):
     try:
