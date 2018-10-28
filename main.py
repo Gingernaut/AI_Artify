@@ -3,8 +3,8 @@ import tweepy
 import urllib.request
 
 credentials = json.loads(open('credentials.json').read())
-TwitterAuth = tweepy.OAuthHandler(credentials['consumerKey'], credentials['consumerSecret'])
-TwitterAuth.set_access_token(credentials['accessToken'], credentials['accessSecret'])
+TwitterAuth = tweepy.OAuthHandler(credentials['twitterConsumerKey'], credentials['twitterConsumerSecret'])
+TwitterAuth.set_access_token(credentials['twitterAccessToken'], credentials['twitterAccessSecret'])
 TwitterApi = tweepy.API(TwitterAuth)
 
 def getQueryTerm():
@@ -13,9 +13,8 @@ def getQueryTerm():
 def getImage():
     random_url = 'https://api.unsplash.com/photos/random?featured=true' + getQueryTerm()
 
-    headers = {'Authorization': 'Client-ID ' + credentials['unsplashID']}
+    headers = {'Authorization': 'Client-ID ' + credentials['unsplashAccessId']}
     img = requests.get(random_url, headers=headers).json()
-
     creditName = img['user'].get('name', img['user'].get('username'))
     if img['user'].get('twitter_username'):
         creditName = '@' + img['user']['twitter_username']

@@ -1,8 +1,9 @@
 {
-    "unsplashID": "",
-    "consumerKey": "",
-    "consumerSecret": "",
-    "accessToken": "",
-    "accessSecret": "",
+    "unsplashAccessId": "",
+    "unsplashSecretId": "",
+    "twitterConsumerKey": "",
+    "twitterConsumerSecret": "",
+    "twitterAccessToken": "",
+    "twitterAccessSecret": "",
     "myTwitter": ""
 }

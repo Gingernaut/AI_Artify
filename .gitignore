@@ -100,3 +100,5 @@ ENV/
 
 credentials.json
 *.jpg
+.vscode/
+.venv/
