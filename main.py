@@ -11,7 +11,7 @@ def getQueryTerm():
     return "&query=" + random.choice(['mountains', 'nature', 'forest', 'jungle', 'beach', 'autumn', 'winter', 'summer', 'spring', 'waterfall', 'rain'])
 
 def getImage():
-    random_url = 'https://api.unsplash.com/photos/random?featured=true' + getQueryTerm()
+    random_url = 'https://api.unsplash.com/photos/random?featured=true'
 
     headers = {'Authorization': 'Client-ID ' + credentials['unsplashAccessId']}
     img = requests.get(random_url, headers=headers).json()

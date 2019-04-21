@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.10.1
+FROM phusion/baseimage:latest
 
 CMD ["/sbin/my_init"]
 
