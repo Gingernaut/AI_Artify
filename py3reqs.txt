@@ -1,2 +1,2 @@
-tweepy==3.6.0
-
+tweepy==3.7.0
+unsplash==1.0.0a2

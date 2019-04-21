@@ -26,8 +26,9 @@ def getImage():
     }
 
 def downloadImage(imgURL):
+    print(imgURL)
     try:
-        savePath = '/app/images/input/' + str(random.randint(1,1000)) + '.jpg'
+        savePath = './images/input/' + str(random.randint(1,1000)) + '.jpg'
         urllib.request.urlretrieve(imgURL, savePath)
         time.sleep(5)
         return savePath
@@ -41,7 +42,7 @@ def getArtStyle():
 
 def styleImage(imgPath, stylePath):
     try:
-        script = str('python evaluate.py --checkpoint ' + stylePath + ' --in-path ' + '/app/images/input/' + ' --out-path ' + '/app/images/output/' + ' --allow-different-dimensions')
+        script = str('python evaluate.py --checkpoint ' + stylePath + ' --in-path ' + './images/input/' + ' --out-path ' + './images/output/' + ' --allow-different-dimensions')
         os.system(script)
         return imgPath.replace('input','output')
 
@@ -66,11 +67,11 @@ def tweetArt(imgPath, post):
 
 
 def removeImages():
-    outputs = glob.glob('/app/images/output/*')
+    outputs = glob.glob('./images/output/*')
     for f in outputs:
         os.remove(f)
 
-    inputs = glob.glob('/app/images/input/*')
+    inputs = glob.glob('./images/input/*')
     for f in inputs:
         os.remove(f)
 
