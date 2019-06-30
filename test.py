@@ -5,8 +5,8 @@ import json, os, glob, random, time
 credentials = json.loads(open("credentials.json").read())
 
 
-unsplashAuth = Auth(credentials['unsplashID'],
-            credentials['unsplashSecret'], 
+unsplashAuth = Auth(credentials['unsplashAccessId'],
+            credentials['unsplashSecretId'], 
             credentials['callbackURL'])
 
 unsplashApi = Api(unsplashAuth)

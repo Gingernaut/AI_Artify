@@ -5,5 +5,7 @@
     "twitterConsumerSecret": "",
     "twitterAccessToken": "",
     "twitterAccessSecret": "",
-    "myTwitter": ""
+    "myTwitter": "",
+    "unsplashID":"",
+    "callbackURL":""
 }
