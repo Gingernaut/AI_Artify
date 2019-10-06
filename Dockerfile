@@ -1,5 +1,5 @@
-FROM phusion/baseimage:latest
-
+ FROM phusion/baseimage:latest
+ 
 CMD ["/sbin/my_init"]
 
 WORKDIR /app
